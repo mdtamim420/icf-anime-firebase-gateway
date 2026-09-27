@@ -59,6 +59,11 @@ CONFIG = {
         "https://*.lovable.app",
         "https://icfanime.vercel.app",
         "https://icfanime-2.vercel.app",
+        # wildcard: সব vercel subdomain (preview + production)
+        "https://*.vercel.app",
+        # Claude artifact tester
+        "https://claude.ai",
+        "https://*.claude.ai",
     ],
     "OWNER_GMAIL": [
         "tamimlegendaryboy@gmail.com",
