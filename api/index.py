@@ -54,17 +54,9 @@ from fastapi.responses import JSONResponse, StreamingResponse
 # ║  ⚙️  SITE CONFIG BLOCK  (override via environment variables)        ║
 # ╚════════════════════════════════════════════════════════════════════╝
 CONFIG = {
-    "ALLOWED_DOMAINS": [
-        "https://otaku-nest-app-07.lovable.app",
-        "https://*.lovable.app",
-        "https://icfanime.vercel.app",
-        "https://icfanime-2.vercel.app",
-        # wildcard: সব vercel subdomain (preview + production)
-        "https://*.vercel.app",
-        # Claude artifact tester
-        "https://claude.ai",
-        "https://*.claude.ai",
-    ],
+    # "*" = সব domain allowed (testing mode)
+    # পরে secure করতে চাইলে এখানে specific domain list দাও
+    "ALLOWED_DOMAINS": ["*"],
     "OWNER_GMAIL": [
         "tamimlegendaryboy@gmail.com",
     ],
@@ -173,10 +165,13 @@ def _origin_allowed(origin: str) -> bool:
 
 
 def _cors_headers(origin: str) -> Dict[str, str]:
-    allowed_origin = str(origin).rstrip("/") if _origin_allowed(origin) else "null"
+    entries = _allowed_origins()
+    if "*" in entries:
+        allowed_origin = "*"
+    else:
+        allowed_origin = str(origin).rstrip("/") if _origin_allowed(origin) else "null"
     return {
         "Access-Control-Allow-Origin": allowed_origin,
-        "Vary": "Origin",
         "Access-Control-Allow-Headers": (
             "authorization, x-client-info, apikey, content-type, "
             "x-app-timestamp, x-app-signature"
