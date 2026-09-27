@@ -1152,3 +1152,13 @@ async def catch_post(full_path: str, request: Request):
         )
     except Exception:
         return JSONResponse({"error": "bad request"}, status_code=400, headers=cors)
+
+
+# ============================================================
+# VERCEL ASGI HANDLER
+# Vercel Python runtime calls `handler` — we wrap FastAPI's
+# ASGI app so it works as a serverless function.
+# ============================================================
+from mangum import Mangum
+
+handler = Mangum(app, lifespan="off")
