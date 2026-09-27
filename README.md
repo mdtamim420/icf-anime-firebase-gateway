@@ -352,3 +352,13 @@ Verify the environment variable is saved in Vercel and the project has been **re
 ## License
 
 MIT — use freely in your own projects.
+
+---
+
+## v3.2 changes (ICF site parity)
+
+- Responses now match the Supabase / Cloudflare gateway 1:1 (added `watchView`, `watchReaction`, `uids/{uid}` write, same lite catalog fields, crash-safe `appConfig` / admin reads).
+- Env JSON accepted as plain JSON, quoted JSON, or base64 — paste the same `FIREBASE_SERVICE_ACCOUNT_JSON`, `FIREBASE_CLIENT_CONFIG_JSON`, `OWNER_GMAIL` (and `APP_SECRET_KEY` if used) as on Supabase, then **Redeploy**.
+- Sealed download streaming fixed; allowed domains synced with Supabase gateway (+ `*.vercel.app`).
+- Runs as native Vercel ASGI (`app`); Mangum removed.
+- Site switch: `src/firebase-setup/gateway.config.ts` → set `VERCEL_GATEWAY.status = "on"` and the others `"off"`.
