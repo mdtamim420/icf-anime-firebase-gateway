@@ -92,9 +92,14 @@ def service_account() -> Dict:
     global _sa_raw, _sa
     raw = _env("FIREBASE_SERVICE_ACCOUNT_JSON")
     if not raw:
-        raise RuntimeError("FIREBASE_SERVICE_ACCOUNT_JSON not set")
+        raise PermissionError("unauthorized")
     if _sa is None or _sa_raw != raw:
-        _sa = json.loads(raw)
+        # Vercel sometimes wraps value in extra quotes — strip them
+        raw2 = raw.strip().lstrip('"').rstrip('"').lstrip("'").rstrip("'")
+        try:
+            _sa = json.loads(raw2)
+        except Exception:
+            _sa = json.loads(raw)
         _sa_raw = raw
     return _sa
 
@@ -103,9 +108,13 @@ def client_config() -> Dict:
     global _cc_raw, _cc
     raw = _env("FIREBASE_CLIENT_CONFIG_JSON")
     if not raw:
-        raise RuntimeError("FIREBASE_CLIENT_CONFIG_JSON not set")
+        raise PermissionError("unauthorized")
     if _cc is None or _cc_raw != raw:
-        _cc = json.loads(raw)
+        raw2 = raw.strip().lstrip('"').rstrip('"').lstrip("'").rstrip("'")
+        try:
+            _cc = json.loads(raw2)
+        except Exception:
+            _cc = json.loads(raw)
         _cc_raw = raw
     return _cc
 
@@ -209,16 +218,9 @@ async def _verify_app_hmac(request: Request, raw_body: str) -> bool:
 
 async def _guard_request(request: Request, raw_body: str) -> Optional[str]:
     """
-    Returns None if the request is allowed.
-    Returns "forbidden" or "unauthorized" if it should be blocked.
+    Open mode: সব origin allow।
+    শুধু browser navigate block।
     """
-    origin = request.headers.get("origin", "")
-    if origin:
-        if not _origin_allowed(origin):
-            return "forbidden"
-    else:
-        if not await _verify_app_hmac(request, raw_body):
-            return "unauthorized"
     if request.headers.get("sec-fetch-mode") == "navigate":
         return "forbidden"
     return None
