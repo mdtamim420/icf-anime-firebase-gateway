@@ -58,6 +58,7 @@ CONFIG = {
         "https://otaku-nest-app-07.lovable.app",
         "https://*.lovable.app",
         "https://icfanime.vercel.app",
+        "https://icfanime-2.vercel.app"
     ],
     "OWNER_GMAIL": [
         "tamimlegendaryboy@gmail.com",
